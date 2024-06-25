@@ -14,8 +14,6 @@ services:
       dockerfile: Dockerfile-frontend
     image: tulip-frontend:latest
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     depends_on:
       - mongo
       - api
@@ -84,7 +82,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-
   enricher:
     build:
       context: services/go-importer
@@ -101,5 +98,16 @@ services:
     environment:
       TULIP_MONGO: ${TULIP_MONGO}
 
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "8081:8081"
+    depends_on:
+      - frontend
+    networks:
+      - internal
+
 networks:
   internal:
+    driver: bridge
