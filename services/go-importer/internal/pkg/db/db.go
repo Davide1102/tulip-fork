@@ -46,6 +46,7 @@ type FlowEntry struct {
 	Size         int
 	Flags        []string
 	Flagids      []string
+	ExpireAt     time.Time
 }
 
 type Database struct {
@@ -103,6 +104,12 @@ func (db Database) ConfigureIndexes() {
 				{"dst_port", 1},
 			},
 		},
+		{
+			Keys: bson.D{
+				{"expireAt", 1},
+			},
+			Options: options.Index().SetExpireAfterSeconds(0),
+		},
 	})
 
 	if err != nil {
@@ -153,6 +160,9 @@ func (db Database) InsertFlow(flow FlowEntry) {
 			flow.Child_id = connectedFlow.MongoID
 		}
 	}
+
+	expireAt := time.Now().Add(1 * time.Hour)
+	flow.ExpireAt = expireAt
 
 	// TODO; use insertMany instead
 	insertion, err := flowCollection.InsertOne(context.TODO(), flow)
