@@ -1,8 +1,10 @@
 FROM golang:1.18-alpine
 
 COPY . /app
-
+COPY v1.13.6.zip /app/v1.13.6.zip
 WORKDIR /app
 
-RUN go mod download
+RUN mkdir -p /go/pkg/mod && \
+    busybox unzip /app/v1.13.6.zip -d /go/pkg/mod
+
 RUN go build ./cmd/enricher

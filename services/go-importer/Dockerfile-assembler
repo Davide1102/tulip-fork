@@ -6,5 +6,7 @@ WORKDIR /app
 
 RUN apk add --no-cache git make build-base libpcap-dev
 
-RUN go mod download
+RUN mkdir -p /go/pkg/mod && \
+    busybox unzip /app/v1.13.6.zip -d /go/pkg/mod
+
 RUN go build ./cmd/assembler
