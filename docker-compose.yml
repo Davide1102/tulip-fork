@@ -107,6 +107,7 @@ services:
       - frontend
     networks:
       - internal
+    restart: unless-stopped
 
 networks:
   internal:
